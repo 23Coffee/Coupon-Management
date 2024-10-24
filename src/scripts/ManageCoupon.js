@@ -16,7 +16,7 @@ function addCoupon() {
         markdownEvent: markdownEvent,  // Store markdown event name
         createdDate: createdDate,
         expireDate: expireDate,
-        status: 'active'
+        status: 'active' // Default status
     };
 
     coupons.push(coupon);
@@ -38,25 +38,30 @@ function renderCoupons() {
     const couponList = document.getElementById('couponList');
     couponList.innerHTML = '';
 
+    const filterValue = document.getElementById('filterStatus').value; // Get current filter value
+
     coupons.forEach((coupon, index) => {
-        const row = document.createElement('tr');
+        // Filter based on status
+        if (filterValue === 'all' || coupon.status === filterValue) {
+            const row = document.createElement('tr');
 
-        row.innerHTML = `
-            <td>${coupon.code}</td>
-            <td>
-                <select onchange="updateStatus(${index}, this.value)">
-                    <option value="active" ${coupon.status === 'active' ? 'selected' : ''}>Active</option>
-                    <option value="inactive" ${coupon.status === 'inactive' ? 'selected' : ''}>Inactive</option>
-                </select>
-            </td>
-            <td>${coupon.discount}%</td>
-            <td>${coupon.markdownEvent}</td>
-            <td>${coupon.createdDate}</td>
-            <td>${coupon.expireDate}</td>
-            <td><button onclick="deleteCoupon(${index})">Delete</button></td>
-        `;
+            row.innerHTML = `
+                <td>${coupon.code}</td>
+                <td>
+                    <select onchange="updateStatus(${index}, this.value)">
+                        <option value="active" ${coupon.status === 'active' ? 'selected' : ''}>Active</option>
+                        <option value="inactive" ${coupon.status === 'inactive' ? 'selected' : ''}>Inactive</option>
+                    </select>
+                </td>
+                <td>${coupon.discount}%</td>
+                <td>${coupon.markdownEvent}</td>
+                <td>${coupon.createdDate}</td>
+                <td>${coupon.expireDate}</td>
+                <td><button onclick="deleteCoupon(${index})">Delete</button></td>
+            `;
 
-        couponList.appendChild(row);
+            couponList.appendChild(row);
+        }
     });
 }
 
@@ -72,4 +77,8 @@ function deleteCoupon(index) {
     renderCoupons();
 }
 
+// Event listener for adding coupons
 document.getElementById('addCoupon').addEventListener('click', addCoupon);
+
+// Event listener for filter change
+document.getElementById('filterStatus').addEventListener('change', renderCoupons);
